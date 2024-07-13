@@ -30,7 +30,7 @@ export const onTransaction: OnTransactionHandler = async ({
 
   const cnvr = convertedChainId.toString();
 
-  const response = await fetch('http://localhost:3000/getBestNotes', {
+  const response = await fetch('http://localhost:3001/getBestNotes', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
