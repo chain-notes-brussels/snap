@@ -5819,4 +5819,4 @@ export const deployedContracts = {
   },
 };
 
-// export default deployedContracts;
+export default deployedContracts;
