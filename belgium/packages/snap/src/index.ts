@@ -37,7 +37,7 @@ export const onTransaction: OnTransactionHandler = async ({
     }
   });
 
-  console.log('respinse : ', comment)
+  console.log('respinse : ', comment.data.response)
 
   
 
@@ -60,7 +60,7 @@ export const onTransaction: OnTransactionHandler = async ({
 
       divider(),
 
-      text(transaction.to),
+      text(comment.data.response),
 
       // text(transactionOrigin),
 

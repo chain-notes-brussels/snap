@@ -24,7 +24,7 @@ const ipfs = createIPFS({ host: 'ipfs.infura.io', port: 5000, protocol: 'https' 
 // for Smart Contract
 import { BaseContract, Contract, ethers } from "ethers";
 import contractAbi from './contractInfo/contractAbi.json'
-import deployedContracts from "./contractInfo/deployedContracts";
+import {deployedContracts} from "./contractInfo/deployedContracts";
 import axios from 'axios'
 // --
 
@@ -196,32 +196,45 @@ app.post("/getBestNotes", async (req, res) => {
   try {
       const address : String = req.body.params.address;
       const chainId : number = req.body.params.chainId;  // Assuming network info is provided in the request
-      console.log(req.body)
-      console.log('chainId : ', chainId)
-      console.log('address : ', address)
+      // console.log(req.body)
+      // console.log('chainId : ', chainId)
+      // console.log('address : ', address)
       const signer = new ethers.Wallet(process.env.KEY_1!, new ethers.JsonRpcProvider(getRpcUrl(chainId)));
       
+
       const contractAddress = getContractAddress(chainId);
       const contract = new ethers.Contract(contractAddress, getContractAbi(chainId), signer);
 
       const response : NoteSM[] = await contract.retrieveContractNotes(address);
 
-      // Convert BigInt to string for serialization
-      const serializedResponse : NoteSM[] = response.map(result => ({
-          noteWriter: result[0],
-          sentiment: result[1].toString(),
-          score: result[2].toString(),
-          cid: result[3]
-      }));
-      
-      // Return response that has highest score
-      const bestNote = serializedResponse.reduce((prev, current) => {
-        return (BigInt(current.score) > BigInt(prev.score)) ? current : prev;
-      });
+      // console.log('')
 
-      const noteFromCid = await axios.get(`https://${bestNote.cid}.ipfs.w3s.link`)
+      console.log('response : ', response)
+
+      let maxScore = -1n;
+      let maxIndex = -1;
+
+      response.forEach((result1, i) => {
+        if (Array.isArray(result1)) {
+          result1.forEach((result2, j) => {
+            if (Array.isArray(result2) && result2[0] > maxScore) {
+              maxScore = result2[0];
+              maxIndex = j;
+            }
+          });
+        }
+      });
+    
+      console.log("Index of highest score:", maxIndex);
+  
+
+      console.log("LOL : ", response[maxIndex][0][1])
+
+      // console.log('cid : ', response[maxIndex][0][2].cid)
       
-      res.json({ response: bestNote, ipfsNote : noteFromCid.data });
+      const noteFromCid = await axios.get(`https://${response[maxIndex][0][2]}.ipfs.w3s.link`)
+      
+      res.json({ response: Number(response[maxIndex][0][1]), ipfsNote : noteFromCid.data });
   } catch (error) {
       console.error("Error retrieving note:", error);
       res.status(500).json({ message: "Failed to retrieve note", error });
