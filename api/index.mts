@@ -119,13 +119,11 @@ app.post("/createNewNote", async (req: Request, res: Response) => {
       "did:key:z6MkoMnWn6NQUrn7LnA6rmRuaQKdtCaax7Q7CHLZFc4ZLekL"
     );
 
-    const note: Note = req.body;
+    const note = req.body; // Expecting note object directly in the request body
 
-    // Create a Blob from the note object directly
-    const noteBlob = new Blob([JSON.stringify(note)], { type: "application/json" });
-
-    // Create a File from the Blob
-    const createdFile = new File([noteBlob], "note.json", {
+    // Create a File from the note object directly
+    const noteContent = JSON.stringify(note);
+    const createdFile = new File([noteContent], "note.json", {
       type: "application/json",
     });
 
