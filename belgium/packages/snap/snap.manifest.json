@@ -1,13 +1,13 @@
 {
   "version": "0.1.0",
-  "description": "CHAINNOTES",
-  "proposedName": "CHAINNOTES",
+  "description": "Oh Snap!",
+  "proposedName": "Oh Snap!",
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/template-snap-monorepo.git"
   },
   "source": {
-    "shasum": "xSOZmTaocGFt/aMsBR7PFGzlXw+MQdEe2zXD04QFo+k=",
+    "shasum": "LemtKCUGfj0J3cTXRHLn6n13x5fDjNF8EYKpfIFNWG8=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
