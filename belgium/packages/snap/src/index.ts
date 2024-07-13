@@ -15,6 +15,7 @@ export const onTransaction: OnTransactionHandler = async ({
   chainId,
   transactionOrigin,
 }) => {
+  console.log('came here')
   console.log('trasanction : ', transaction)
   // Function to fetch insights
   async function getJson(url: string): Promise<string> {
@@ -29,12 +30,14 @@ export const onTransaction: OnTransactionHandler = async ({
 
   const cnvr = convertedChainId.toString();
 
-  // const comment = await axios.post(`http://localhost:3000/getBestNotes`, {
-  //   params: { 
-  //     chainId: convertedChainId,
-  //     address : transactionOrigin,
-  //   }
-  // });
+  const comment = await axios.post(`http://localhost:3000/getBestNotes`, {
+    params: { 
+      chainId: convertedChainId,
+      address : transaction.to,
+    }
+  });
+
+  console.log('respinse : ', comment)
 
   
 
@@ -57,7 +60,9 @@ export const onTransaction: OnTransactionHandler = async ({
 
       divider(),
 
-      text(transactionOrigin),
+      text(transaction.to),
+
+      // text(transactionOrigin),
 
       // heading("Tip Commentator"),
 

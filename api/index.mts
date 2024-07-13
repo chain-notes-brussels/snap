@@ -22,7 +22,7 @@ const ipfs = createIPFS({ host: 'ipfs.infura.io', port: 5000, protocol: 'https' 
 // for Smart Contract
 import { BaseContract, Contract, ethers } from "ethers";
 import contractAbi from './contractInfo/contractAbi.json'
-import deployedContracts from "./contractInfo/deployedContracts";
+import { deployedContracts } from "./contractInfo/deployedContracts";
 import axios from 'axios'
 // --
 
@@ -42,6 +42,8 @@ const port = 3000;
 
 // Helper function to get the RPC URL based on the network
 function getRpcUrl(chainId: number): string {
+  console.log('um : ', deployedContracts[11155111])
+  console.log('deploted : ', deployedContracts)
   return deployedContracts[chainId].rpcUrl;
 } 
 
@@ -191,6 +193,8 @@ app.post("/getBestNotes", async (req, res) => {
       const address : String = req.body.params.address;
       const chainId : number = req.body.params.chainId;  // Assuming network info is provided in the request
       console.log(req.body)
+      console.log('chainId : ', chainId)
+      console.log('address : ', address)
       const signer = new ethers.Wallet(process.env.KEY_1!, new ethers.JsonRpcProvider(getRpcUrl(chainId)));
       
       const contractAddress = getContractAddress(chainId);
