@@ -2,7 +2,7 @@ import type { OnTransactionHandler } from "@metamask/snaps-sdk";
 import { panel, heading, text, input, button, form, row, address, divider, image } from "@metamask/snaps-sdk";
 import type { SeverityLevel, OnSignatureHandler } from "@metamask/snaps-sdk";
 import checkMark from "./public/checkmark.svg";
-
+import axios from "axios";
 
 interface EthSignature {
   from: string;
@@ -15,6 +15,7 @@ export const onTransaction: OnTransactionHandler = async ({
   chainId,
   transactionOrigin,
 }) => {
+  console.log('trasanction : ', transaction)
   // Function to fetch insights
   async function getJson(url: string): Promise<string> {
     const response = await fetch(url);
@@ -22,7 +23,18 @@ export const onTransaction: OnTransactionHandler = async ({
     return JSON.stringify(data);
   }
 
-  const convertedChainId = parseInt(chainId.split(":")[1]);
+  const hexChainId = chainId.split(":")[1]
+
+  const convertedChainId = parseInt(hexChainId!, 16);
+
+  const cnvr = convertedChainId.toString();
+
+  // const comment = await axios.post(`http://localhost:3000/getBestNotes`, {
+  //   params: { 
+  //     chainId: convertedChainId,
+  //     address : transactionOrigin,
+  //   }
+  // });
 
   
 
@@ -41,9 +53,11 @@ export const onTransaction: OnTransactionHandler = async ({
       row("🚫", text("this contract is scam! duh")),
 
   
-      row("chainId : ", text(chainId)),
+      row("chainId : ", text(cnvr)),
 
       divider(),
+
+      text(transactionOrigin),
 
       // heading("Tip Commentator"),
 

@@ -1,20 +1,40 @@
+// THIS IS THE MAIN FILE FOR THE API
+
+// THIS API IS FOR MANAGING IPFS AND SMART CONTRACT INTERACTIONS
+
+// FUNCTIONS INCLUDED ( /createNewNote, /getNote, /getAllComments, /getBestNotes )
+
+// CODE \\
 
 // -- IMPORTS -- \\
 
+// for API
 import express, { Request, Response, Application } from "express";
-import cors from "cors";
+import cors from "cors"
+// --;
 
+// for IPFS
+import { create as createIPFS } from 'ipfs-http-client';
 import { create } from "@web3-storage/w3up-client";
+const ipfs = createIPFS({ host: 'ipfs.infura.io', port: 5000, protocol: 'https' });
+// --
 
-import {BaseContract, Contract, ethers} from "ethers";
+// for Smart Contract
+import { BaseContract, Contract, ethers } from "ethers";
 import contractAbi from './contractInfo/contractAbi.json'
 import deployedContracts from "./contractInfo/deployedContracts";
+import axios from 'axios'
+// --
 
+// config
 import dotenv from 'dotenv';
 dotenv.config();
+//--
 
+// main app
 export const app: Application = express();
 const port = 3000;
+// --
 
 // ---------------- \\
 
@@ -62,6 +82,7 @@ app.get("/hello", (req: Request, res: Response) => {
 
 
   // TYPES \\
+
 // Type for note
 type Note = {
   chainId: number;
@@ -85,6 +106,7 @@ type NoteSM = {
 // -- ENDPOINTS -- \\
 
 // endpoint to create a new note
+// receiving args ( chainId, commentator, comment, sentiment, timestamp )
 app.post("/createNewNote", async (req: Request, res: Response) => {
   try {
     const client = await create();
@@ -110,23 +132,23 @@ app.post("/createNewNote", async (req: Request, res: Response) => {
   }
 });
 
-// endpoint to get a note by CID ( NOT DONE )
-
+// endpoint to get a note by CID
+// receiving args ( cid )
 app.get("/getNote", async (req: Request, res: Response) => {
   try {
     const cid = req.query.cid as string;
+
+    console.log('cid : ', cid)
 
     if (!cid) {
       return res.status(400).json({ message: "CID is required" });
     }
 
-    const response = await fetch(`https://ipfs.io/ipfs/${cid}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch the note from IPFS');
-    }
+    const resp = await axios.get(`https://${cid}.ipfs.w3s.link`)
 
-    const note = await response.text();
-    res.status(200).json({ note });
+    console.log('resp : ', resp.data)
+
+    res.json({ type : typeof(resp.data),  response: resp.data });
 
   } catch (error) {
     console.error("Error retrieving note:", error);
@@ -135,6 +157,7 @@ app.get("/getNote", async (req: Request, res: Response) => {
 });
 
 // endpoint to get all notes for a given address
+// receiving args ( address )
 app.post("/getAllComments", async (req, res) => {
   try {
       const address = req.body.address;
@@ -160,15 +183,18 @@ app.post("/getAllComments", async (req, res) => {
   }
 });
 
+
 // endpoint to get best notes for a given address
+// receiving args ( address, chainId )
 app.post("/getBestNotes", async (req, res) => {
   try {
-      const address = req.body.address;
-      const network = req.body.network;  // Assuming network info is provided in the request
-      const signer = new ethers.Wallet(process.env.KEY_1!, new ethers.JsonRpcProvider(getRpcUrl(network)));
+      const address : String = req.body.params.address;
+      const chainId : number = req.body.params.chainId;  // Assuming network info is provided in the request
+      console.log(req.body)
+      const signer = new ethers.Wallet(process.env.KEY_1!, new ethers.JsonRpcProvider(getRpcUrl(chainId)));
       
-      const contractAddress = getContractAddress(network);
-      const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+      const contractAddress = getContractAddress(chainId);
+      const contract = new ethers.Contract(contractAddress, getContractAbi(chainId), signer);
 
       const response : NoteSM[] = await contract.retrieveContractNotes(address);
 
@@ -179,13 +205,15 @@ app.post("/getBestNotes", async (req, res) => {
           score: result[2].toString(),
           cid: result[3]
       }));
-
+      
       // Return response that has highest score
       const bestNote = serializedResponse.reduce((prev, current) => {
         return (BigInt(current.score) > BigInt(prev.score)) ? current : prev;
       });
 
-      res.json({ response: bestNote });
+      const noteFromCid = await axios.get(`https://${bestNote.cid}.ipfs.w3s.link`)
+      
+      res.json({ response: bestNote, ipfsNote : noteFromCid.data });
   } catch (error) {
       console.error("Error retrieving note:", error);
       res.status(500).json({ message: "Failed to retrieve note", error });
