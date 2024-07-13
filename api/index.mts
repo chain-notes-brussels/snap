@@ -39,7 +39,7 @@ dotenv.config();
 
 // main app
 export const app: Application = express();
-const port = 3000;
+const port = 3001;
 // --
 
 // ---------------- \\
