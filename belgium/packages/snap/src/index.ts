@@ -21,6 +21,9 @@ export const onTransaction: OnTransactionHandler = async ({
     const data = await response.json();
     return JSON.stringify(data);
   }
+
+  const convertedChainId = parseInt(chainId.split(":")[1]);
+
   
 
   // const insights = await getJson("http://localhost:3000/hello");
@@ -38,7 +41,7 @@ export const onTransaction: OnTransactionHandler = async ({
       row("🚫", text("this contract is scam! duh")),
 
   
-
+      row("chainId : ", text(chainId)),
 
       divider(),
 

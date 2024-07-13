@@ -111,18 +111,23 @@ app.post("/createNewNote", async (req: Request, res: Response) => {
 });
 
 // endpoint to get a note by CID ( NOT DONE )
+
 app.get("/getNote", async (req: Request, res: Response) => {
   try {
+    const cid = req.query.cid as string;
 
-    // connect to ipfs
-    const client = await create();
-    await client.login("atsetsoffc@gmail.com");
-    await client.setCurrentSpace(
-      "did:key:z6MkoMnWn6NQUrn7LnA6rmRuaQKdtCaax7Q7CHLZFc4ZLekL"
-    );
-    
+    if (!cid) {
+      return res.status(400).json({ message: "CID is required" });
+    }
 
-    // To Be Done
+    const response = await fetch(`https://ipfs.io/ipfs/${cid}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch the note from IPFS');
+    }
+
+    const note = await response.text();
+    res.status(200).json({ note });
+
   } catch (error) {
     console.error("Error retrieving note:", error);
     res.status(500).json({ message: "Failed to retrieve note", error });
