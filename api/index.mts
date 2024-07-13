@@ -11,6 +11,8 @@
 // for API
 import express, { Request, Response, Application } from "express";
 import cors from "cors"
+// import { File } from 'node-fetch';
+
 // --;
 
 // for IPFS
@@ -120,11 +122,11 @@ app.post("/createNewNote", async (req: Request, res: Response) => {
     const note: Note = req.body;
 
     const noteContent = JSON.stringify(note);
-    const file = new File([noteContent], "note.json", {
+    const createdFile = new File([noteContent], "note.json", {
       type: "application/json",
     });
 
-    const cid = await client.uploadFile(file);
+    const cid = await client.uploadFile(createdFile);
     console.log(`Uploaded to ${cid}`);
 
     res.json({ message: "Note created successfully", cid });
