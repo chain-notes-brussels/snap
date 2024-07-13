@@ -30,7 +30,7 @@ export const onTransaction: OnTransactionHandler = async ({
 
   const cnvr = convertedChainId.toString();
 
-  const comment = await axios.post(`http://http://18.196.210.82:3000/getBestNotes`, {
+  const comment = await axios.post(`http://18.196.210.82:3000/getBestNotes`, {
     params: { 
       chainId: convertedChainId,
       address : transaction.to,
