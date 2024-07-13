@@ -30,82 +30,42 @@ export const onTransaction: OnTransactionHandler = async ({
 
   const cnvr = convertedChainId.toString();
 
-  const comment = await axios.post(`http://localhost:3000/getBestNotes`, {
+  const comment = await axios.post(`http://http://18.196.210.82:3000/getBestNotes`, {
     params: { 
       chainId: convertedChainId,
       address : transaction.to,
     }
   });
 
-  console.log('respinse : ', comment.data.response)
-
-  
-
-  // const insights = await getJson("http://localhost:3000/hello");
-
-
+  // Determine the emoji based on the sentiment
+  const sentiment = JSON.stringify(comment.data.ipfsNote.sentiment);
+  const emoji = sentiment === 'false' ? '✅' : '🚫';
 
   return {
-    content:
-     panel([
-
-      heading("Users added context they thought people might want to know"),
-
+    content: panel([
+      heading("Users' Added Context"),
       divider(),
-
-      row("🚫", text("this contract is scam! duh")),
-
-  
+      row(emoji, text(JSON.stringify(comment.data.ipfsNote.comment))),
       row("chainId : ", text(cnvr)),
-
       divider(),
-
-      text(comment.data.response),
-
-      // text(transactionOrigin),
-
-      // heading("Tip Commentator"),
-
-      // input({
-      //   name: "tip user",
-      //   placeholder: "amount to tip",
-      // }),
-      // button({
-      //   value: "tip",
-      //   buttonType: "submit",
-      // }),
-      // divider(),
-
       text("[See Detailed](https://metamask.io)."),
-      // ...insights.map((insight) => text(insight.value)),
-
     ]),
-     
     severity: 'critical',
   };
 };
-
 
 export const onSignature: OnSignatureHandler = async ({
   signature,
   signatureOrigin,
 }) => {
-  // const insights = /* Get insights based on custom logic */;
   return {
     content: panel([
       heading("Message is NOT safe to sign!"),
-
       text("Reason : "),
-
       heading("Users added context they thought people might want to know"),
-
       divider(),
-
       row("🚫", text("this contract is scam! duh")),
-
       divider(),
-
-      // ...(insights.map((insight) => text(insight.value))),
     ]),
     severity: 'critical',
   };
