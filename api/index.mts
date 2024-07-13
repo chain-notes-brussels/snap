@@ -1,7 +1,9 @@
 import express, { Request, Response, Application } from 'express';
 import cors from 'cors';
+import { create } from '@web3-storage/w3up-client';
+// const { create } = require('@web3-storage/w3up-client');
 
-const app: Application = express();
+export const app: Application = express();
 const port = 3000;
 
 // Use the cors middleware with specific options
@@ -15,7 +17,7 @@ app.get('/hello', (req: Request, res: Response) => {
   res.json({ message: 'yes' });
 });
 
-//  type for note
+// Type for note
 type Note = {
   chainId: number;
   commentator: string;
@@ -30,22 +32,23 @@ const spaceName = 'notes-space';
 
 const initializeClient = async () => {
   if (!client) {
-    const { create } = await import('@web3-storage/w3up-client');
+    // const { create } = await import('@web3-storage/w3up-client');
+
     client = await create();
-    const account = await client.login('atsetsoffc@gmail.com');
+    // const account = await client.login('atsetsoffc@gmail.com');
 
     // Check if the space already exists
-    const spaces = await client.listSpaces();
-    space = spaces.find((s: any) => s.name === spaceName);
+    // const spaces = await client.listSpaces();
+    // space = spaces.find((s: any) => s.name === spaceName);
 
-    if (!space) {
-      space = await client.createSpace(spaceName);
-      await client.addSpace(await space.createAuthorization(client));
-      await client.setCurrentSpace(space.did());
-      await account.provision(space.did());
-    } else {
-      await client.setCurrentSpace(space.did());
-    }
+    // if (!space) {
+    //   space = await client.createSpace(spaceName);
+    //   await client.addSpace(await space.createAuthorization(client));
+    //   await client.setCurrentSpace(space.did());
+    //   await account.provision(space.did());
+    // } else {
+    //   await client.setCurrentSpace(space.did());
+    // }
   }
 };
 
@@ -69,7 +72,27 @@ app.post('/createNewNote', async (req: Request, res: Response) => {
 });
 
 app.get('/getNote', async (req: Request, res: Response) => {
-  // Implementation for getNote endpoint
+  try {
+    await initializeClient();
+
+    const cid = req.query.cid as string;
+    if (!cid) {
+      return res.status(400).json({ message: 'CID is required' });
+    }
+
+    const file = await client.getFile(cid);
+    if (!file) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+
+    const noteContent = await file.text();
+    const note: Note = JSON.parse(noteContent);
+
+    res.json(note);
+  } catch (error) {
+    console.error('Error retrieving note:', error);
+    res.status(500).json({ message: 'Failed to retrieve note', error });
+  }
 });
 
 app.listen(port, () => {
