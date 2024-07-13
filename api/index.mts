@@ -2,7 +2,7 @@
 
 // THIS API IS FOR MANAGING IPFS AND SMART CONTRACT INTERACTIONS WITH SNAP
 
-// FUNCTIONS INCLUDED ( /createNewNote, /getNote, /getAllComments, /getBestNotes )
+// FUNCTIONS INCLUDED ( /createNewNote, /getNote, /getAllComments, /getBestNotes)
 
 // CODE \\
 
