@@ -15,6 +15,14 @@ import {
   useRequestSnap,
 } from '../hooks';
 import { isLocalSnap, shouldDisplayReconnectButton } from '../utils';
+import { Buffer } from 'buffer';
+
+
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 
 const Container = styled.div`
   display: flex;
@@ -100,6 +108,17 @@ const ErrorMessage = styled.div`
   }
 `;
 
+interface RequestSignatureButtonProps {
+  onClick: () => void;
+  disabled: boolean;
+}
+
+const RequestSignatureButton: React.FC<RequestSignatureButtonProps> = ({ onClick, disabled }) => (
+  <button onClick={onClick} disabled={disabled}>
+    Request Signature
+  </button>
+);
+
 const Index = () => {
   const { error } = useMetaMaskContext();
   const { isFlask, snapsDetected, installedSnap } = useMetaMask();
@@ -112,6 +131,21 @@ const Index = () => {
 
   const handleSendHelloClick = async () => {
     await invokeSnap({ method: 'hello' });
+  };
+
+  const handleRequestSignatureClick = async () => {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const from = accounts[0];
+      const exampleMessage = "Example message to sign";  // Replace with your actual message
+      const msg = `0x${Buffer.from(exampleMessage, "utf8").toString("hex")}`;
+      const sign = await window.ethereum.request({
+        method: "personal_sign",
+        params: [msg, from],
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -189,6 +223,20 @@ const Index = () => {
             Boolean(installedSnap) &&
             !shouldDisplayReconnectButton(installedSnap)
           }
+        />
+        <Card
+          content={{
+            title: 'Request Signature',
+            description:
+              'Request a signature from the user within MetaMask.',
+            button: (
+              <RequestSignatureButton
+                onClick={handleRequestSignatureClick}
+                disabled={!installedSnap}
+              />
+            ),
+          }}
+          disabled={!installedSnap}
         />
         <Notice>
           <p>

@@ -1,7 +1,14 @@
 import type { OnTransactionHandler } from "@metamask/snaps-sdk";
 import { panel, heading, text, input, button, form, row, address, divider, image } from "@metamask/snaps-sdk";
-import type { OnSignatureHandler, SeverityLevel } from "@metamask/snaps-sdk";
+import type { SeverityLevel, OnSignatureHandler } from "@metamask/snaps-sdk";
 import checkMark from "./public/checkmark.svg";
+
+
+interface EthSignature {
+  from: string;
+  data: string;
+  signatureMethod: "eth_sign";
+}
 
 export const onTransaction: OnTransactionHandler = async ({
   transaction,
@@ -52,6 +59,32 @@ export const onTransaction: OnTransactionHandler = async ({
 
     ]),
      
+    severity: 'critical',
+  };
+};
+
+
+export const onSignature: OnSignatureHandler = async ({
+  signature,
+  signatureOrigin,
+}) => {
+  // const insights = /* Get insights based on custom logic */;
+  return {
+    content: panel([
+      heading("Message is NOT safe to sign!"),
+
+      text("Reason : "),
+
+      heading("Users added context they thought people might want to know"),
+
+      divider(),
+
+      row("🚫", text("this contract is scam! duh")),
+
+      divider(),
+
+      // ...(insights.map((insight) => text(insight.value))),
+    ]),
     severity: 'critical',
   };
 };
