@@ -22,7 +22,7 @@ const ipfs = createIPFS({ host: 'ipfs.infura.io', port: 5000, protocol: 'https' 
 // for Smart Contract
 import { BaseContract, Contract, ethers } from "ethers";
 import contractAbi from './contractInfo/contractAbi.json'
-import { deployedContracts } from "./contractInfo/deployedContracts";
+import deployedContracts from "./contractInfo/deployedContracts";
 import axios from 'axios'
 // --
 
