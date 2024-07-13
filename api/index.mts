@@ -1,8 +1,12 @@
+
+// -- IMPORTS -- \\
+
 import express, { Request, Response, Application } from "express";
 import cors from "cors";
+
 import { create } from "@web3-storage/w3up-client";
+
 import {BaseContract, Contract, ethers} from "ethers";
-// const { create } = require('@web3-storage/w3up-client');
 import contractAbi from './contractInfo/contractAbi.json'
 import deployedContracts from "./contractInfo/deployedContracts";
 
@@ -11,6 +15,8 @@ dotenv.config();
 
 export const app: Application = express();
 const port = 3000;
+
+// ---------------- \\
 
 //  -- HELPER FUNCTIONS -- \\
 
@@ -33,18 +39,26 @@ function getContractAbi(chainId: number): string {
 
 
 
-// Use the cors middleware with specific options
+// -- MIDDLEWARES -- \\
+
+// cors middleware
 app.use(
   cors({
     origin: "*", // Allow all origins
   })
 );
 
+// json middleware
 app.use(express.json());
 
+// ------------------- \\
+
+
+// -- TEST ENDPOINTS -- \\
 app.get("/hello", (req: Request, res: Response) => {
   res.json({ message: "yes" });
 });
+// ---------------------- \\
 
 
   // TYPES \\
@@ -67,9 +81,8 @@ type NoteSM = {
 
 // -------------------- \\
 
-let client: any;
-let space: any;
-const spaceName = "notes-space";
+
+// -- ENDPOINTS -- \\
 
 // endpoint to create a new note
 app.post("/createNewNote", async (req: Request, res: Response) => {
@@ -100,23 +113,16 @@ app.post("/createNewNote", async (req: Request, res: Response) => {
 // endpoint to get a note by CID ( NOT DONE )
 app.get("/getNote", async (req: Request, res: Response) => {
   try {
-    client = await create();
-    const account = await client.login("atsetsoffc@gmail.com");
 
-    const cid = req.query.cid as string;
-    if (!cid) {
-      return res.status(400).json({ message: "CID is required" });
-    }
+    // connect to ipfs
+    const client = await create();
+    await client.login("atsetsoffc@gmail.com");
+    await client.setCurrentSpace(
+      "did:key:z6MkoMnWn6NQUrn7LnA6rmRuaQKdtCaax7Q7CHLZFc4ZLekL"
+    );
+    
 
-    const file = await client.getFile(cid);
-    if (!file) {
-      return res.status(404).json({ message: "Note not found" });
-    }
-
-    const noteContent = await file.text();
-    const note: Note = JSON.parse(noteContent);
-
-    res.json(note);
+    // To Be Done
   } catch (error) {
     console.error("Error retrieving note:", error);
     res.status(500).json({ message: "Failed to retrieve note", error });
@@ -181,6 +187,11 @@ app.post("/getBestNotes", async (req, res) => {
   }
 });
 
+// ----------------- \\
+
+
+// -- LISTEN FUNCTION -- \\
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+// --------------------- \\
