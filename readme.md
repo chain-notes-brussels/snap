@@ -12,7 +12,7 @@
 ---
 &nbsp;
 
-how to run snap
+## How To Run Snap 
 cd into api
 
 &nbsp;
