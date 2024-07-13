@@ -13,7 +13,6 @@
 &nbsp;
 
 ## How To Run Snap 
-cd into api
 
 &nbsp;
 
@@ -32,7 +31,7 @@ yarn start
   ## /createNewNote
    **description** :  endpoint to create new note on ipfs that takes arguments
 
-The function accepts the following arguments:
+The function accepts the following **arguments**:
 
 - **`chainId`**: <span style="color:green;">**Number**</span>
 - **`commentator`**: <span style="color:green;">**String**</span>
@@ -40,7 +39,7 @@ The function accepts the following arguments:
 - **`sentiment`**: <span style="color:green;">**Boolean**</span>
 - **`timestamp`**: <span style="color:green;">**Date**</span>
 
-### Function Return Types
+### Function **Return** Types
 
 The function returns the following:
 
