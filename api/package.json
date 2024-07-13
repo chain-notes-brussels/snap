@@ -17,6 +17,7 @@
     "@types/node": "^20.14.10",
     "@web3-storage/w3up-client": "^15.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "ethers": "^6.13.1",
     "express": "^4.19.2",
     "install": "^0.13.0",
