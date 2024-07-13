@@ -30,12 +30,20 @@ export const onTransaction: OnTransactionHandler = async ({
 
   const cnvr = convertedChainId.toString();
 
-  const comment = await axios.post(`http://18.196.210.82:3000/getBestNotes`, {
-    params: { 
-      chainId: convertedChainId,
-      address : transaction.to,
-    }
+  const response = await fetch('http://localhost:3000/getBestNotes', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      params: { 
+        chainId: convertedChainId,
+        address: transaction.to,
+      }
+    })
   });
+  const comment = await response.json();
+  
 
   // Determine the emoji based on the sentiment
   const sentiment = JSON.stringify(comment.data.ipfsNote.sentiment);
