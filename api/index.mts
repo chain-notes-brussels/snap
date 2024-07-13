@@ -121,8 +121,11 @@ app.post("/createNewNote", async (req: Request, res: Response) => {
 
     const note: Note = req.body;
 
-    const noteContent = JSON.stringify(note);
-    const createdFile = new File([noteContent], "note.json", {
+    // Create a Blob from the note object directly
+    const noteBlob = new Blob([JSON.stringify(note)], { type: "application/json" });
+
+    // Create a File from the Blob
+    const createdFile = new File([noteBlob], "note.json", {
       type: "application/json",
     });
 
@@ -135,6 +138,7 @@ app.post("/createNewNote", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to create note", error });
   }
 });
+
 
 // endpoint to get a note by CID
 // receiving args ( cid )
