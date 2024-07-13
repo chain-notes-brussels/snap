@@ -44,9 +44,11 @@ const initializeClient = async () => {
     if (!space) {
       space = await client.createSpace(spaceName);
       await client.addSpace(await space.createAuthorization(client));
+      console.log(`Created space ${space.did()}`);
       await client.setCurrentSpace(space.did());
       await account.provision(space.did());
     } else {
+      console.log(`Using existing space ${space.did()}`);
       await client.setCurrentSpace(space.did());
     }
   }
