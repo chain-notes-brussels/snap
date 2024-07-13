@@ -34,24 +34,10 @@ const spaceName = "notes-space";
 
 app.post("/createNewNote", async (req: Request, res: Response) => {
   try {
-    client = await create();
-    const account = await client.login("atsetsoffc@gmail.com");
-
-    // Check if the space already exists
-    const spaces = await client.listSpaces();
-    space = spaces.find((s: any) => s.name === spaceName);
-
-    if (!space) {
-      space = await client.createSpace(spaceName);
-      await client.addSpace(await space.createAuthorization(client));
-      console.log(`Created space ${space.did()}`);
-      await client.setCurrentSpace(space.did());
-      await account.provision(space.did());
-    } else {
-      console.log(`Using existing space ${space.did()}`);
-      await client.setCurrentSpace(space.did());
-    }
-
+const client = await create()
+await client.login('atsetsoffc@gmail.com')
+await client.setCurrentSpace('did:key:z6MkoMnWn6NQUrn7LnA6rmRuaQKdtCaax7Q7CHLZFc4ZLekL')
+    
     const note: Note = req.body;
 
     const noteContent = JSON.stringify(note);
