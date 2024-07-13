@@ -35,20 +35,20 @@ const initializeClient = async () => {
     // const { create } = await import('@web3-storage/w3up-client');
 
     client = await create();
-    // const account = await client.login('atsetsoffc@gmail.com');
+    const account = await client.login('atsetsoffc@gmail.com');
 
     // Check if the space already exists
-    // const spaces = await client.listSpaces();
-    // space = spaces.find((s: any) => s.name === spaceName);
+    const spaces = await client.listSpaces();
+    space = spaces.find((s: any) => s.name === spaceName);
 
-    // if (!space) {
-    //   space = await client.createSpace(spaceName);
-    //   await client.addSpace(await space.createAuthorization(client));
-    //   await client.setCurrentSpace(space.did());
-    //   await account.provision(space.did());
-    // } else {
-    //   await client.setCurrentSpace(space.did());
-    // }
+    if (!space) {
+      space = await client.createSpace(spaceName);
+      await client.addSpace(await space.createAuthorization(client));
+      await client.setCurrentSpace(space.did());
+      await account.provision(space.did());
+    } else {
+      await client.setCurrentSpace(space.did());
+    }
   }
 };
 
