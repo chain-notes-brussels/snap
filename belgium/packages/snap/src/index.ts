@@ -37,9 +37,12 @@ export const onTransaction: OnTransactionHandler = async ({
     }
   });
 
+
+
   // Determine the emoji based on the sentiment
   const sentiment = JSON.stringify(comment.data.ipfsNote.sentiment);
   const emoji = sentiment === 'false' ? '✅' : '🚫';
+  const statg = sentiment === 'false' ? 'normal' : 'critical';
 
   return {
     content: panel([
@@ -50,7 +53,7 @@ export const onTransaction: OnTransactionHandler = async ({
       divider(),
       text("[See Detailed](https://metamask.io)."),
     ]),
-    severity: 'critical',
+    severity: statg,
   };
 };
 
@@ -67,6 +70,6 @@ export const onSignature: OnSignatureHandler = async ({
       row("🚫", text("this contract is scam! duh")),
       divider(),
     ]),
-    severity: 'critical',
+    // severity: statg,
   };
 };
