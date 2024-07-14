@@ -1,13 +1,12 @@
-## 🏗 Chain Notes
+# ⛓️ Oh Snap!
 
-
-<h4 >
-  <a href="https://github.com/chain-notes-brussels/chain-notes-snap">Frontend Repo</a> |
+<h4 align="center">
+  <a href="https://github.com/chain-notes-brussels/chain-notes-snap">Repo</a> |
   <a href="https://chain-notes.vercel.app/">Website</a>
 
-  ![logo](assets/logo.png)
 
-<h4>
+![logo](assets/logo.png)
+</h4>
 
 ---
 &nbsp;
